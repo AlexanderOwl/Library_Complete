@@ -18,7 +18,10 @@ namespace Library
 
             _books = !File.Exists("lib.xml") ? new List<Book>() : Menu.DeserializeFromXML(); // Если существует файл читает из него, если файла нет создает новый список книг.
             Menu menu = new Menu(); //Экземпляр класса меню.
-            menu.Add5(_books);
+            if (!File.Exists("lib.xml"))
+            {
+                menu.Add5(_books);
+            }
             menu.Open(_books);// Вызов метода Open класса меню.
         }
     }
