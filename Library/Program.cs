@@ -20,7 +20,7 @@ namespace Library
             Menu menu = new Menu(); //Экземпляр класса меню.
             if (!File.Exists("lib.xml"))
             {
-                menu.Add5(books);
+               menu.Add5(books);
             }
             menu.Open(books);// Вызов метода Open класса меню.
         }

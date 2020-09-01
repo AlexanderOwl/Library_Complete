@@ -11,20 +11,30 @@ namespace Library
         public void Open(List<Book> books)
         {
             bool flag = true;
+            
+           
             while (flag)
             {
+                bool booksExist = true;
+                if (books.Count == 0)
+                {
+                    booksExist = false;
+                }
+
                 switch (Console.ReadLine())
                 {
                     case "help":
                         Console.WriteLine(" help - command list" +
                             "\n add - add new book" +
                             "\n print [order] [field] - print list of book by [ascending/descending] [name/author/publisher/year]" +
+                            "\n search - find book by pert of name" +
                             "\n delete - delete book" +
                             "\n save - save book" +
                             "\n stat - statistic about book" +
-                            "\n load - load book from lib.xml" +
+                            //"\n load - load book from lib.xml" +
                             "\n take - take book for library" +
-                            "\n return - return book to library");
+                            "\n return - return book to library" +
+                            "\n exit - exit and save to file");
                         break;
 
                     case "add":
@@ -38,59 +48,96 @@ namespace Library
                         break;
 
                     case "stat":
-                        Stat(books);
+                        if (booksExist)
+                            Stat(books);
+                        else Console.WriteLine("No books!");
                         break;
 
                     case "print":
-                        Print(books);
+                        if (booksExist)
+                            Print(books);
+                        else Console.WriteLine("No books!");
+
                         break;
 
                     case "print descending name":
-                        Print(books, "descending", "name");
+                        if (booksExist)
+                            Print(books, "descending", "name");
+                        else Console.WriteLine("No books!");
+
                         break;
 
                     case "print ascending name":
-                        Print(books, "ascending", "name");
+                        if (booksExist)
+                            Print(books, "ascending", "name");
+                        else Console.WriteLine("No books!");
+
                         break;
                     case "print descending author":
-                        Print(books, "descending", "author");
+                        if (booksExist)
+                            Print(books, "descending", "author");
+                        else Console.WriteLine("No books!");
+
                         break;
 
                     case "print ascending author":
-                        Print(books, "ascending", "author");
+                        if (booksExist)
+                            Print(books, "ascending", "author");
+                        else Console.WriteLine("No books!");
+
                         break;
 
                     case "print descending publisher":
-                        Print(books, "descending", "publisher");
+                        if (booksExist)
+                            Print(books, "descending", "publisher");
+                        else Console.WriteLine("No books!");
+
                         break;
 
                     case "print ascending publisher":
-                        Print(books, "ascending", "publisher");
+                        if (booksExist)
+                            Print(books, "ascending", "publisher");
+                        else Console.WriteLine("No books!");
+
                         break;
                     case "print descending year":
-                        Print(books, "descending", "year");
+                        if (booksExist)
+                            Print(books, "descending", "year");
+                        else Console.WriteLine("No books!");
+
                         break;
 
                     case "print ascending year":
-                        Print(books, "ascending", "year");
+                        if (booksExist)
+                            Print(books, "ascending", "year");
+                        else Console.WriteLine("No books!");
+
                         break;
 
                     case "search":
-                        Search(books);
+                        if (booksExist)
+                            Search(books);
+                        else Console.WriteLine("No books!");
+
                         break;
 
                     case "delete":
-                        Console.WriteLine("Input name of book to delete");
-                        Delete(Console.ReadLine(), books);
+                        if (booksExist)
+                        {
+                            Console.WriteLine("Input name of book to delete");
+                            Delete(Console.ReadLine(), books);
+                        }
+                        else Console.WriteLine("No books!");
+
                         break;
 
                     case "save":
                         SerializeToXML(books);
                         break;
 
-                    case "load":
-                        books = DeserializeFromXML();
-                        break;
+                    //case "load":
+                    //    books = DeserializeFromXML();
+                    //    break;
 
                     case "take":
                         TakeBook(books);
@@ -316,17 +363,17 @@ namespace Library
             }
 
         }//Поиск совпадений введенного текста пользователем в полях Name Author Publisher
-        public void Add5(List<Book> books) 
-        {          
-            books.Add(new Book("Harper Lee","To Kill a Mockingbird","AST",1960, "Library", 0));
-            books.Add(new Book("J.R.R. Tolkien","The Lord of the Rings","Ranok",1954, "Library", 0));
-            books.Add(new Book("Jane Austen","Pride and Prejudice","ABABAGALAGAMA",1797, "Library", 0));
-            books.Add(new Book("Markus Zusak","The Book Thief","Pechat` na kolenkakh",2004, "Library", 0));
-            books.Add(new Book("Louisa May Alcott","Little Women","Ne Publisher",1868, "Library", 0));
+        public void Add5(List<Book> books)
+        {
+            books.Add(new Book("Harper Lee", "To Kill a Mockingbird", "AST", 1960, "Library", 0));
+            books.Add(new Book("J.R.R. Tolkien", "The Lord of the Rings", "Ranok", 1954, "Library", 0));
+            books.Add(new Book("Jane Austen", "Pride and Prejudice", "ABABAGALAGAMA", 1797, "Library", 0));
+            books.Add(new Book("Markus Zusak", "The Book Thief", "Pechat` na kolenkakh", 2004, "Library", 0));
+            books.Add(new Book("Louisa May Alcott", "Little Women", "Ne Publisher", 1868, "Library", 0));
         }//Добавляет новую книгу
 
 
-        static void Add(List<Book> books) 
+        static void Add(List<Book> books)
         {
             Console.WriteLine("To add book input\n" +
                                           "Аuthor, Name, Publisher, Year");
@@ -368,6 +415,10 @@ namespace Library
                     }
                 }
                 books.Add(new Book(temp[0], temp[1], temp[2], year, "Library", 0));
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine("The book added!");
+                Console.ResetColor();
+                Console.WriteLine();
             }
         }//Добавляет новую книгу
 
@@ -376,8 +427,15 @@ namespace Library
         {
             Console.WriteLine("Input num of book that u want to take: ");
             Print(books);
-
-            if (int.TryParse(Console.ReadLine(), out int choise) && choise > 0 && choise <= books.Count)
+            int choise;
+            bool isChoise = int.TryParse(Console.ReadLine(), out choise);
+            if (books[choise - 1].Owner != "Library")
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("This book doesnot exist");
+                Console.ResetColor();
+            }
+            else if (isChoise && choise > 0 && choise <= books.Count)
             {
                 Console.Write("Input your name and surname: ");
                 string name = Console.ReadLine();
@@ -385,14 +443,18 @@ namespace Library
                 int days;
                 if (int.TryParse(Console.ReadLine(), out days))
                 {
-                    if (days < 1 && days > 30)
+                    if (days < 1 || days > 30)
                     {
                         Console.WriteLine("You cannot borrow a book for this period");
                     }
+
                     else
                     {
                         books[choise - 1].Owner = name;
                         books[choise - 1].NumOfDays += days;
+                        Console.ForegroundColor = ConsoleColor.DarkGreen;
+                        Console.WriteLine($"Congratulation! Dont forget return book after {days} days.");
+                        Console.ResetColor();
                     }
                 }
                 else if (!int.TryParse(Console.ReadLine(), out days))
@@ -416,7 +478,7 @@ namespace Library
                 int id = 1;
                 foreach (Book book in books)
                 {
-                    if (book.Owner.Contains(name))
+                    if (book.Owner.Equals(name))
                     {
                         Console.WriteLine("#id {0} Name: {1}, Author: {2}, Publisher: {3}, Year: {4}", id, book.Name, book.Author, book.Publisher, book.Year);
                         find = true;
@@ -443,17 +505,24 @@ namespace Library
                 Console.WriteLine("Enter the id of the book you want to check in: ");
                 if (int.TryParse(Console.ReadLine(), out int choise))
                 {
-                    if (books[choise - 1].Owner == name)
+                    if (choise > 0 && choise <= books.Count && books[choise - 1].Owner == name)
+                    {
                         books[choise - 1].Owner = "Library";
-
+                    }
                     else
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("You dont have this book");
+                        Console.ResetColor();
+
                     }
                 }
                 else
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Incorrect input");
+                    Console.ResetColor();
+
                 }
             }
 
